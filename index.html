@@ -1,0 +1,173 @@
+<!doctype html><html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ÄNGELVERK – Főoldal látványterv</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07141b;color:#eef6f8}body{overflow:hidden}
+.top{height:58px;background:#0b1c24;border-bottom:1px solid #29434f;display:flex;align-items:center;padding:0 12px;position:relative;z-index:5}
+.brand{font-size:19px;font-weight:900;flex:1}.brand b{color:#35bdf1}.icons{display:flex;gap:10px}.icon{width:34px;height:34px;border:1px solid #38515d;border-radius:9px;background:#112832;color:#eaf5f8;font-size:17px}
+.nav{height:64px;background:#0a1a22;border-bottom:1px solid #29434f;display:flex;overflow-x:auto;scrollbar-width:none}.nav button{min-width:68px;flex:1;border:0;background:none;color:#9bafb8;font-size:9px;padding:6px 5px}.nav button span{display:block;font-size:21px;margin-bottom:3px}.nav .active{color:#52c8f3;border-bottom:3px solid #35bdf1}
+.actions{height:48px;display:flex;align-items:center;gap:7px;padding:6px 10px;background:#0b1d25;border-bottom:1px solid #29434f;overflow-x:auto}.actions button{height:34px;border:1px solid #3a5662;border-radius:7px;background:#102832;color:#e9f3f6;padding:0 12px;white-space:nowrap;font-weight:700}.actions .new{background:#ffb30f;color:#15120a;border-color:#ffb30f}.actions .del{color:#ff8c91}
+.searchrow{display:flex;gap:7px;padding:8px 10px;background:#07141b}.searchrow input{min-width:0;flex:1;height:36px;border:1px solid #35515d;border-radius:8px;background:#102630;color:#eef6f8;padding:0 11px}.searchrow button{border:1px solid #35515d;border-radius:8px;background:#102630;color:#eef6f8;padding:0 12px}
+.tablewrap{position:absolute;top:178px;bottom:46px;left:0;right:0;overflow:auto;-webkit-overflow-scrolling:touch}table{border-collapse:collapse;width:max-content;min-width:100%;font-size:13px}thead{position:sticky;top:0;z-index:3;background:#102630}th{text-align:left;padding:9px 3px;border-bottom:1px solid #3b5661;color:#b8c8cf;white-space:nowrap;cursor:pointer}td{padding:9px 3px;border-bottom:1px solid #18313b;white-space:nowrap}tbody tr:nth-child(even){background:#0a1b23}tbody tr.sel{background:#0d5c78}.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}.open{background:#f0a318}.closed{background:#7964d7}.sort{color:#4ec8f4;margin-left:4px}
+.peek{position:fixed;bottom:7px;left:9px;right:9px;height:42px;border:1px solid #456879;background:#0c222c;border-radius:13px;display:flex;align-items:center;padding:0 12px;z-index:8;box-shadow:0 -5px 20px #0008}.peek .grab{width:35px;height:4px;border-radius:5px;background:#7695a2;margin-right:10px}.peek b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.peek span{margin-left:auto;color:#8db0bf}
+.drawer{position:fixed;left:0;right:0;bottom:0;height:66vh;background:#0b202a;border-top:1px solid #4b7688;border-radius:17px 17px 0 0;z-index:20;transform:translateY(100%);transition:.2s;box-shadow:0 -15px 40px #000b;display:flex;flex-direction:column}.drawer.on{transform:translateY(0)}.dhead{height:52px;display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid #29434f}.handle{width:44px;height:5px;border-radius:5px;background:#7393a1;margin-right:10px}.dhead b{font-size:12px;flex:1}.close{background:none;border:0;color:#dcecf2;font-size:21px}.tabs{display:flex;overflow-x:auto;border-bottom:1px solid #29434f}.tabs button{border:0;background:none;color:#9fb3bc;padding:10px 12px;white-space:nowrap}.tabs .on{color:#4cc9f5;border-bottom:2px solid #4cc9f5}.content{overflow:auto;padding:10px}.item{display:grid;grid-template-columns:1fr auto;gap:5px;padding:10px 3px;border-bottom:1px solid #24404b}.item small{color:#9eb1ba}.sum{padding:14px 3px;text-align:right;font-size:18px;font-weight:900;color:#ffbd2d}.hint{color:#8fa5ae;font-size:11px;margin-top:10px}
+@media(min-width:800px){body{max-width:1100px;margin:auto;border-left:1px solid #213a44;border-right:1px solid #213a44}}
+
+#tbl th:first-child,#tbl td:first-child{padding-left:8px}
+#tbl th:last-child,#tbl td:last-child{padding-right:8px}
+
+/* V6: secondary toolbar + search are fixed together; only the table scrolls */
+.actions{position:fixed;top:122px;left:0;right:0;z-index:12}
+.searchrow{position:fixed;top:170px;left:0;right:0;z-index:12;border-bottom:1px solid #29434f}
+.tablewrap{top:222px}
+@media(min-width:800px){
+  .actions,.searchrow{left:50%;right:auto;width:min(1100px,100%);transform:translateX(-50%)}
+}
+
+
+/* V8 – three-state draggable bottom sheet */
+.drawer{height:auto;min-height:0;max-height:none;transform:none;transition:height .22s ease,border-radius .22s ease;overflow:hidden}
+.drawer.collapsed{height:82px;border-radius:17px 17px 0 0}
+.drawer.half{height:52vh;border-radius:17px 17px 0 0}
+.drawer.full{height:calc(100vh - 8px);border-radius:17px 17px 0 0}
+.sheet-grab{height:20px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:ns-resize}
+.sheet-grab span{display:block;width:46px;height:5px;border-radius:8px;background:#7896a3}
+.dhead{height:50px;padding:3px 12px 8px}
+.statusball{width:28px;height:28px;border-radius:50%;background:#f0a318;color:white;display:flex;align-items:center;justify-content:center;font-weight:900;margin-right:9px}
+.sheet-title{min-width:0;flex:1}.sheet-title b,.sheet-title small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sheet-title b{font-size:13px}.sheet-title small{font-size:11px;color:#9fb4bd;margin-top:2px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px 10px;border-top:1px solid #203a45;border-bottom:1px solid #29434f}
+.quick div{background:#102832;border:1px solid #35515d;border-radius:8px;padding:7px 5px;text-align:center;min-width:0}.quick b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.quick small{display:block;color:#91a9b3;font-size:9px;margin-top:2px}
+.drawer.collapsed .quick,.drawer.collapsed .tabs,.drawer.collapsed .content{display:none}
+.drawer.collapsed .sheet-grab{height:14px}.drawer.collapsed .dhead{height:62px}
+.tabs{flex:0 0 auto}.tabs button{font-size:11px;padding:9px 10px}
+.content{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+.tabpane{display:none}.tabpane.on{display:block}
+details{border:1px solid #294650;background:#0e2630;border-radius:9px;margin-bottom:8px;overflow:hidden}
+summary{padding:11px 12px;font-weight:800;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:"⌄";float:right;color:#75c9ea}details[open] summary:after{content:"⌃"}
+.detailgrid{display:grid;grid-template-columns:minmax(95px,.8fr) minmax(120px,1.2fr);gap:0;border-top:1px solid #294650}.detailgrid span,.detailgrid b{padding:7px 10px;border-bottom:1px solid #183640;font-size:11px}.detailgrid span{color:#9eb2ba}.detailgrid b{text-align:right}
+.subtabs{display:flex;overflow-x:auto;padding:7px;gap:5px;border-top:1px solid #294650}.subtabs button{border:1px solid #35515d;background:#102832;color:#dce9ed;border-radius:6px;padding:6px 8px;white-space:nowrap;font-size:10px}.subtabs .on{background:#178dcc;border-color:#35bdf1}
+.note,.card{padding:12px;color:#c8d7dc;font-size:12px;line-height:1.45}.card{background:#0e2630;border:1px solid #294650;border-radius:9px}.card b{font-size:14px}.card p{margin:8px 0}
+body.sheet-open .peek{display:none}
+
+</style></head><body>
+<header class="top"><div class="brand"><b>Ä</b> ÄNGELVERK</div><div class="icons"><button class="icon">🔔</button><button class="icon">⚙</button></div></header>
+<nav class="nav"><button class="active"><span>▣</span>Munkalap</button><button><span>🚗</span>Autó</button><button><span>👤</span>Ügyfél</button><button><span>🔧</span>Szolgált.</button><button><span>📦</span>Termék</button><button><span>▤</span>Raktár</button></nav>
+<div class="actions"><button class="new">＋ Új</button><button>✎ Szerkesztés</button><button class="del">⌫ Törlés</button><button>•••</button></div>
+<div class="searchrow"><input id="q" placeholder="Keresés: rendszám, ügyfél, autó…"><button>Szűrő</button></div>
+<div class="tablewrap"><table id="tbl"><thead><tr><th data-i="0">Sorszám <span class="sort">▼</span></th><th data-i="1">Állapot <span class="sort"></span></th><th data-i="2">Rendszám <span class="sort"></span></th><th data-i="3">Autó <span class="sort"></span></th><th data-i="4">Ügyfél <span class="sort"></span></th><th data-i="5">Dátum <span class="sort"></span></th><th data-i="6">Bruttó <span class="sort"></span></th></tr></thead><tbody><tr data-no="400" data-state="Nyitott" data-plate="JIX-494" data-car="Volvo S60 2001" data-customer="Matusek István" data-date="2026.10.01" data-total="168 559 Ft"><td>400</td><td><span class="dot open"></span>Nyitott</td><td><b>JIX-494</b></td><td>Volvo S60 2001</td><td>Matusek István</td><td>2026.10.01</td><td>168 559 Ft</td></tr>
+<tr data-no="399" data-state="Nyitott" data-plate="JTL-306" data-car="Volvo S60 2005" data-customer="Dobráczky Márton" data-date="2026.10.01" data-total="219 072 Ft"><td>399</td><td><span class="dot open"></span>Nyitott</td><td><b>JTL-306</b></td><td>Volvo S60 2005</td><td>Dobráczky Márton</td><td>2026.10.01</td><td>219 072 Ft</td></tr>
+<tr data-no="397" data-state="Lezárt" data-plate="AELI-926" data-car="Volvo S80 2007" data-customer="Vágási Zoltán" data-date="2026.09.30" data-total="154 592 Ft"><td>397</td><td><span class="dot closed"></span>Lezárt</td><td><b>AELI-926</b></td><td>Volvo S80 2007</td><td>Vágási Zoltán</td><td>2026.09.30</td><td>154 592 Ft</td></tr>
+<tr data-no="396" data-state="Lezárt" data-plate="AIBI-850" data-car="Kia K2500 2005" data-customer="Fülöp Viktor" data-date="2026.09.28" data-total="92 000 Ft"><td>396</td><td><span class="dot closed"></span>Lezárt</td><td><b>AIBI-850</b></td><td>Kia K2500 2005</td><td>Fülöp Viktor</td><td>2026.09.28</td><td>92 000 Ft</td></tr>
+<tr data-no="393" data-state="Lezárt" data-plate="HSD-661" data-car="Volvo S60 2001" data-customer="Kurti István" data-date="2026.09.08" data-total="407 429 Ft"><td>393</td><td><span class="dot closed"></span>Lezárt</td><td><b>HSD-661</b></td><td>Volvo S60 2001</td><td>Kurti István</td><td>2026.09.08</td><td>407 429 Ft</td></tr>
+<tr data-no="392" data-state="Nyitott" data-plate="KVA-654" data-car="Volvo S80 2002" data-customer="Polgár Krisztián" data-date="2026.07.22" data-total="140 750 Ft"><td>392</td><td><span class="dot open"></span>Nyitott</td><td><b>KVA-654</b></td><td>Volvo S80 2002</td><td>Polgár Krisztián</td><td>2026.07.22</td><td>140 750 Ft</td></tr>
+<tr data-no="391" data-state="Lezárt" data-plate="AELI-926" data-car="Volvo S80 2007" data-customer="Vágási Zoltán" data-date="2026.08.28" data-total="103 645 Ft"><td>391</td><td><span class="dot closed"></span>Lezárt</td><td><b>AELI-926</b></td><td>Volvo S80 2007</td><td>Vágási Zoltán</td><td>2026.08.28</td><td>103 645 Ft</td></tr>
+<tr data-no="390" data-state="Lezárt" data-plate="IVT-830" data-car="Volvo V70 2003" data-customer="Lepsényi Tamás" data-date="2026.08.26" data-total="201 941 Ft"><td>390</td><td><span class="dot closed"></span>Lezárt</td><td><b>IVT-830</b></td><td>Volvo V70 2003</td><td>Lepsényi Tamás</td><td>2026.08.26</td><td>201 941 Ft</td></tr>
+<tr data-no="389" data-state="Nyitott" data-plate="LFM-942" data-car="Saab 9-3 2007" data-customer="Horváth Gábor" data-date="2026.08.26" data-total="513 902 Ft"><td>389</td><td><span class="dot open"></span>Nyitott</td><td><b>LFM-942</b></td><td>Saab 9-3 2007</td><td>Horváth Gábor</td><td>2026.08.26</td><td>513 902 Ft</td></tr>
+<tr data-no="388" data-state="Lezárt" data-plate="AELI-926" data-car="Volvo S80 2007" data-customer="Vágási Zoltán" data-date="2026.07.31" data-total="66 214 Ft"><td>388</td><td><span class="dot closed"></span>Lezárt</td><td><b>AELI-926</b></td><td>Volvo S80 2007</td><td>Vágási Zoltán</td><td>2026.07.31</td><td>66 214 Ft</td></tr>
+<tr data-no="387" data-state="Nyitott" data-plate="KVA-654" data-car="Volvo S80 2002" data-customer="Polgár Krisztián" data-date="2026.07.22" data-total="140 750 Ft"><td>387</td><td><span class="dot open"></span>Nyitott</td><td><b>KVA-654</b></td><td>Volvo S80 2002</td><td>Polgár Krisztián</td><td>2026.07.22</td><td>140 750 Ft</td></tr>
+<tr data-no="386" data-state="Nyitott" data-plate="JKX-303" data-car="Volvo S90 1997" data-customer="Romics Balázs" data-date="2026.07.19" data-total="146 145 Ft"><td>386</td><td><span class="dot open"></span>Nyitott</td><td><b>JKX-303</b></td><td>Volvo S90 1997</td><td>Romics Balázs</td><td>2026.07.19</td><td>146 145 Ft</td></tr>
+<tr data-no="385" data-state="Lezárt" data-plate="LDD-236" data-car="Volvo V70 2004" data-customer="Nyakó Bence" data-date="2026.07.15" data-total="521 590 Ft"><td>385</td><td><span class="dot closed"></span>Lezárt</td><td><b>LDD-236</b></td><td>Volvo V70 2004</td><td>Nyakó Bence</td><td>2026.07.15</td><td>521 590 Ft</td></tr>
+<tr data-no="384" data-state="Lezárt" data-plate="AAIV-200" data-car="Volvo V70 2005" data-customer="Móker Máté" data-date="2026.07.15" data-total="105 000 Ft"><td>384</td><td><span class="dot closed"></span>Lezárt</td><td><b>AAIV-200</b></td><td>Volvo V70 2005</td><td>Móker Máté</td><td>2026.07.15</td><td>105 000 Ft</td></tr>
+<tr data-no="383" data-state="Lezárt" data-plate="PDL-340" data-car="Volvo XC70 2006" data-customer="Vajda Máté" data-date="2026.07.15" data-total="274 894 Ft"><td>383</td><td><span class="dot closed"></span>Lezárt</td><td><b>PDL-340</b></td><td>Volvo XC70 2006</td><td>Vajda Máté</td><td>2026.07.15</td><td>274 894 Ft</td></tr>
+<tr data-no="382" data-state="Lezárt" data-plate="AODL-765" data-car="Volvo V70 2006" data-customer="Gálóczi Bálint" data-date="2026.07.15" data-total="335 735 Ft"><td>382</td><td><span class="dot closed"></span>Lezárt</td><td><b>AODL-765</b></td><td>Volvo V70 2006</td><td>Gálóczi Bálint</td><td>2026.07.15</td><td>335 735 Ft</td></tr>
+<tr data-no="381" data-state="Lezárt" data-plate="AAAW-976" data-car="Volvo V70 2004" data-customer="Kalász Péter" data-date="2026.06.23" data-total="244 630 Ft"><td>381</td><td><span class="dot closed"></span>Lezárt</td><td><b>AAAW-976</b></td><td>Volvo V70 2004</td><td>Kalász Péter</td><td>2026.06.23</td><td>244 630 Ft</td></tr>
+<tr data-no="380" data-state="Lezárt" data-plate="XJU-152" data-car="Volvo V70 2004" data-customer="Horváth Róbert" data-date="2026.06.22" data-total="135 000 Ft"><td>380</td><td><span class="dot closed"></span>Lezárt</td><td><b>XJU-152</b></td><td>Volvo V70 2004</td><td>Horváth Róbert</td><td>2026.06.22</td><td>135 000 Ft</td></tr>
+<tr data-no="379" data-state="Lezárt" data-plate="PBY-926" data-car="Volvo S60 2004" data-customer="Csóka Gyula" data-date="2026.06.16" data-total="58 590 Ft"><td>379</td><td><span class="dot closed"></span>Lezárt</td><td><b>PBY-926</b></td><td>Volvo S60 2004</td><td>Csóka Gyula</td><td>2026.06.16</td><td>58 590 Ft</td></tr>
+<tr data-no="378" data-state="Lezárt" data-plate="AODL-765" data-car="Volvo V70 2006" data-customer="Gálóczi Bálint" data-date="2026.06.14" data-total="66 500 Ft"><td>378</td><td><span class="dot closed"></span>Lezárt</td><td><b>AODL-765</b></td><td>Volvo V70 2006</td><td>Gálóczi Bálint</td><td>2026.06.14</td><td>66 500 Ft</td></tr>
+<tr data-no="377" data-state="Lezárt" data-plate="RBR-756" data-car="Volvo S60 2001" data-customer="Bakó György" data-date="2026.06.11" data-total="274 704 Ft"><td>377</td><td><span class="dot closed"></span>Lezárt</td><td><b>RBR-756</b></td><td>Volvo S60 2001</td><td>Bakó György</td><td>2026.06.11</td><td>274 704 Ft</td></tr>
+<tr data-no="376" data-state="Nyitott" data-plate="NGS-166" data-car="Volvo V70 2003" data-customer="Récsei Richárd" data-date="2026.06.10" data-total="201 732 Ft"><td>376</td><td><span class="dot open"></span>Nyitott</td><td><b>NGS-166</b></td><td>Volvo V70 2003</td><td>Récsei Richárd</td><td>2026.06.10</td><td>201 732 Ft</td></tr>
+<tr data-no="375" data-state="Lezárt" data-plate="AODL-765" data-car="Volvo V70 2006" data-customer="Gálóczi Bálint" data-date="2026.06.08" data-total="158 817 Ft"><td>375</td><td><span class="dot closed"></span>Lezárt</td><td><b>AODL-765</b></td><td>Volvo V70 2006</td><td>Gálóczi Bálint</td><td>2026.06.08</td><td>158 817 Ft</td></tr>
+<tr data-no="374" data-state="Lezárt" data-plate="HSD-661" data-car="Volvo S60 2001" data-customer="Kurti István" data-date="2026.06.07" data-total="30 000 Ft"><td>374</td><td><span class="dot closed"></span>Lezárt</td><td><b>HSD-661</b></td><td>Volvo S60 2001</td><td>Kurti István</td><td>2026.06.07</td><td>30 000 Ft</td></tr>
+<tr data-no="373" data-state="Lezárt" data-plate="SCF-732" data-car="Volvo V70 2003" data-customer="Czinege Dániel" data-date="2026.06.07" data-total="278 697 Ft"><td>373</td><td><span class="dot closed"></span>Lezárt</td><td><b>SCF-732</b></td><td>Volvo V70 2003</td><td>Czinege Dániel</td><td>2026.06.07</td><td>278 697 Ft</td></tr></tbody></table></div>
+<div class="peek" id="peek"><i class="grab"></i><b id="peektext">Munkalap 400 · JIX-494 · Matusek István</b><span>⌃</span></div>
+<section class="drawer half" id="drawer">
+  <div class="sheet-grab" id="sheetGrab"><span></span></div>
+  <div class="dhead">
+    <div class="statusball">!</div>
+    <div class="sheet-title">
+      <b id="title">Munkalap 400 · JIX-494 · Matusek István</b>
+      <small id="subtitle">Volvo S60 2001</small>
+    </div>
+    <button class="close" id="close">×</button>
+  </div>
+
+  <div class="quick">
+    <div><b id="qkm">168 559 Ft</b><small>Összesen</small></div>
+    <div><b id="qdate">2026.10.01</b><small>Készült</small></div>
+    <div><b id="qstate">Nyitott</b><small>Állapot</small></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="on" data-tab="work">Munkalap</button>
+    <button data-tab="car">Autó</button>
+    <button data-tab="customer">Ügyfél</button>
+    <button data-tab="faults">Hibák</button>
+    <button data-tab="services">Szolgáltatások</button>
+    <button data-tab="products">Termékek</button>
+    <button data-tab="invoice">Számlák</button>
+  </div>
+
+  <div class="content">
+    <div class="tabpane on" data-pane="work">
+      <details open><summary>Alapadatok</summary><div class="detailgrid">
+        <span>Sorszám</span><b id="dno">400</b><span>Állapot</span><b id="dstate">Nyitott</b>
+        <span>Rendszám</span><b id="dplate">JIX-494</b><span>Autó</span><b id="dcar">Volvo S60 2001</b>
+        <span>Ügyfél</span><b id="dcustomer">Matusek István</b><span>Készült</span><b id="ddate">2026.10.01</b>
+        <span>Határidő</span><b>—</b><span>Elkészült</span><b>—</b>
+      </div></details>
+
+      <details><summary>Pénzügyek</summary><div class="detailgrid">
+        <span>Bruttó összeg</span><b id="dtotal">168 559 Ft</b>
+        <span>Fizetett összeg</span><b>0 Ft</b><span>Fizetendő</span><b id="ddue">168 559 Ft</b>
+      </div></details>
+
+      <details><summary>Jármű átvétel</summary><div class="detailgrid">
+        <span>Km-óra állás</span><b>104 053 km</b><span>Üzemanyagszint</span><b>20%</b>
+        <span>Csereeszköz</span><b>—</b><span>Tartozékok</span><b>—</b>
+      </div></details>
+
+      <details><summary>Megjegyzések és fájlok</summary>
+        <div class="subtabs"><button class="on">Adatok</button><button>Megjegyzés</button><button>Csatolt fájlok</button><button>Belső megjegyzés</button></div>
+        <div class="note">A munkalaphoz tartozó megjegyzések, csatolt dokumentumok és belső információk itt jelennek meg.</div>
+      </details>
+    </div>
+
+    <div class="tabpane" data-pane="car"><div class="card"><b id="carTitle">Volvo S60 2001</b><p>Rendszám: <b id="carPlate">JIX-494</b></p><p>Alvázszám, motorszám, km-óra és a jármű további adatai ezen a fülön jelennek meg.</p></div></div>
+    <div class="tabpane" data-pane="customer"><div class="card"><b id="custTitle">Matusek István</b><p>Az ügyfél elérhetőségei és kapcsolódó adatai.</p></div></div>
+    <div class="tabpane" data-pane="faults"><div class="card"><b>Hibák</b><p>A munkalaphoz rögzített hibajelenségek és diagnosztikai információk.</p></div></div>
+    <div class="tabpane" data-pane="services"><div class="card"><b>Szolgáltatások</b><p>Átvizsgálás · javítás · munkadíj</p></div></div>
+    <div class="tabpane" data-pane="products"><div class="card"><b>Termékek / alkatrészek</b><p>Olaj · szűrők · beépített alkatrészek</p></div></div>
+    <div class="tabpane" data-pane="invoice"><div class="card"><b>Számlák</b><p>Kapcsolódó számla- és fizetési adatok.</p></div></div>
+  </div>
+</section>
+<script>
+const tb=document.querySelector('#tbl tbody'), heads=[...document.querySelectorAll('th')];
+let dir={0:-1};
+heads.forEach(h=>h.onclick=()=>{let i=+h.dataset.i;dir[i]=-(dir[i]||-1);let rs=[...tb.rows];rs.sort((a,b)=>{let A=a.cells[i].innerText.trim(),B=b.cells[i].innerText.trim();if(i===0)return(+A-+B)*dir[i];return A.localeCompare(B,'hu',{numeric:true})*dir[i]});rs.forEach(r=>tb.appendChild(r));heads.forEach(x=>x.querySelector('.sort').textContent='');h.querySelector('.sort').textContent=dir[i]>0?'▲':'▼';});
+[...tb.rows].forEach(r=>r.onclick=()=>{[...tb.rows].forEach(x=>x.classList.remove('sel'));r.classList.add('sel');let t=`Munkalap ${r.dataset.no} · ${r.dataset.plate} · ${r.dataset.customer}`;peektext.textContent=t;title.textContent=t;});
+peek.onclick=()=>;close.onclick=e=>{e.stopPropagation();};
+q.oninput=()=>{let v=q.value.toLocaleLowerCase('hu');[...tb.rows].forEach(r=>r.style.display=r.innerText.toLocaleLowerCase('hu').includes(v)?'':'none')};
+</script>
+<script>
+(function(){
+ const sheet=document.getElementById('drawer'), grab=document.getElementById('sheetGrab');
+ const states=['collapsed','half','full']; let state='half', y0=0, dragging=false;
+ function setState(n){ state=n; sheet.classList.remove(...states); sheet.classList.add(n); document.body.classList.toggle('sheet-open',n!=='collapsed'); }
+ function fill(r){
+   const no=r.dataset.no, plate=r.dataset.plate, car=r.dataset.car, customer=r.dataset.customer, date=r.dataset.date, total=r.dataset.total, st=r.dataset.state;
+   title.textContent=`Munkalap ${no} · ${plate} · ${customer}`; subtitle.textContent=car;
+   qkm.textContent=total; qdate.textContent=date; qstate.textContent=st;
+   dno.textContent=no; dstate.textContent=st; dplate.textContent=plate; dcar.textContent=car; dcustomer.textContent=customer; ddate.textContent=date; dtotal.textContent=total; ddue.textContent=total;
+   carTitle.textContent=car; carPlate.textContent=plate; custTitle.textContent=customer;
+ }
+ [...document.querySelectorAll('#tbl tbody tr')].forEach(r=>r.addEventListener('click',()=>{fill(r);setState('half')}));
+ document.getElementById('peek').addEventListener('click',()=>setState('half'));
+ document.getElementById('close').onclick=(e)=>{e.stopPropagation();setState('collapsed')};
+ grab.addEventListener('click',()=>setState(state==='collapsed'?'half':state==='half'?'full':'half'));
+ grab.addEventListener('pointerdown',e=>{dragging=true;y0=e.clientY;grab.setPointerCapture(e.pointerId)});
+ grab.addEventListener('pointerup',e=>{if(!dragging)return;dragging=false;let dy=e.clientY-y0;if(dy<-35)setState(state==='collapsed'?'half':'full');else if(dy>35)setState(state==='full'?'half':'collapsed')});
+ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tabpane').forEach(x=>x.classList.toggle('on',x.dataset.pane===b.dataset.tab));});
+ setState('collapsed');
+})();
+</script>
+
+</body></html>
